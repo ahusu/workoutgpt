@@ -1,26 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import ProgressBar from './ProgressBar.jsx';
+import Prompt from './Prompt.jsx';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [page, setPage] = useState(0);
+  const [input, setInput] = useState('');
+  const [hovering, setHovering] = useState(false);
+
+  const nextPage = () => {
+    setPage(page+1)
+  };
+
+  const handleInput = (input) => {
+    setInput(input);
+  };
 
   return (
     <>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ProgressBar page={page} nextPage={nextPage} />
+      <h3>Welcome to your WorkoutGPT Onboarding!</h3>
+      <Prompt page={page} input={input}/>
+      <textarea rows="5" cols="60" name="text" placeholder="Enter text" onChange={(e)=>{handleInput(e.target.value)}}></textarea>
+      <button onClick={() => nextPage()}
+              onMouseEnter={() => setHovering(true)}
+              onMouseLeave={() => setHovering(false)}
+              style={hovering ? hoverStyles : buttonStyles}>
+        Submit
+      </button>
     </>
   )
 }
+const buttonStyles = {
+  backgroundColor: 'blue',
+  color: 'white'
+};
 
+const hoverStyles = {
+  backgroundColor: 'darkblue',
+  color: 'white'
+};
 export default App

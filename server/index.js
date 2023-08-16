@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import { getChatGPTResponse } from './openai.js';
 
 const app = express();
 const PORT = 3000;
 
-app.get('/', (req, res) => {
+app.post('localhost:3000/api', (req, res) => {
     res.send('Hello World!');
 });
 
