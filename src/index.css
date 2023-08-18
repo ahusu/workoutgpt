@@ -26,7 +26,9 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  align-items: flex-start; /* Aligns children to the start of the container */
+  justify-content: center; /* Centers children horizontally */
+  padding-top: 15vh; /* Puts content 25% down, which is 75% up */
   min-width: 320px;
   min-height: 100vh;
 }
