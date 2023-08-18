@@ -1,5 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 
 module.exports = {
   entry: './src/main.jsx',
@@ -27,13 +29,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx']
-  },
-  devServer: {
-    contentBase: path.join(__dirname, 'public'), // Where the dev server should look for static files
-    port: 8080, // Port for the dev server
-    open: true, // Opens the browser after server had been started
-    historyApiFallback: true, // Needed for apps with routing to redirect all server requests to index.html
-  },
+  }, // Needed for apps with routing to redirect all server requests to index.html
   plugins: [
     new HtmlWebpackPlugin({
         template: './src/index.html', // source html
