@@ -6,11 +6,13 @@ const Prompt = ({ page, nextPage }) => {
   const [prompt, setPrompt] = useState("What is your fitness goal?");
   const [responding, setResponding] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     const newSocket = io("http://localhost:3000");
     setSocket(newSocket);
-
+    let currentHistory = JSON.parse(sessionStorage.getItem("messages")) || [];
+    if(currentHistory) setHistory(currentHistory);
     newSocket.on("connect", () => {
       console.log("Socket connected!");
     });
@@ -24,15 +26,11 @@ const Prompt = ({ page, nextPage }) => {
 
     newSocket.on("endOfStream", () => {
       console.log("reached end of stream");
-      setTimeout(() => {
-        let currentHistory =
-          JSON.parse(sessionStorage.getItem("messages")) || [];
-        currentHistory.push({
-          role: "assistant",
-          content: prompt,
-        });
-        sessionStorage.setItem("messages", JSON.stringify(currentHistory));
-      }, 200);
+      setHistory([...history ,{
+        role: "assistant",
+        content: prompt,
+      }]);
+      sessionStorage.setItem("messages", JSON.stringify(history));
       setResponding(false);
       nextPage();
     });
