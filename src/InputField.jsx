@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const InputField = ({ socket, nextPage, page, clearPrompt }) => {
+const InputField = ({ socket, page, clearPrompt }) => {
   const [input, setInput] = useState('');
   const [hovering, setHovering] = useState(false);
 
@@ -11,11 +11,19 @@ const InputField = ({ socket, nextPage, page, clearPrompt }) => {
         role: "system",
         content: "You are a helpful assistant.",
       },
+      {
+        role:"assistant",
+        content: "what is your fitness goal?"
+      }
     ];
-    socket.emit("getOpenAIResponse", { prompt: input, conversationHistory: conversationHistory, questionNumber: page });
+    conversationHistory.push({
+      role: 'user',
+      content: input
+    });
+    sessionStorage.setItem("messages", JSON.stringify(conversationHistory));
+    socket.emit("getOpenAIResponse", { answer: input, conversationHistory: conversationHistory, questionNumber: page });
     setInput('');
     clearPrompt();
-    nextPage();
   };
 
   return (

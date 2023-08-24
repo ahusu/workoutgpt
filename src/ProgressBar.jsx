@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const ProgressBar = ({page}) => {
-  const progressPercentage = (page / 10) * 100; // Calculate progress percentage based on current page
+  const progressPercentage = (page / 5) * 100; // Calculate progress percentage based on current page
 
   const progressContainerStyles = {
     width: '100%',

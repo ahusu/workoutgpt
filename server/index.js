@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { Server } from "socket.io";
 import { getChatGPTResponse } from "./openai.js";
 import morgan from 'morgan';
-import prompt from './prompt.js'
+import promptGen from './promptGen.js'
 
 const app = express();
 const server = http.createServer(app);
@@ -23,10 +23,12 @@ io.on("connection", (socket) => {
 
     socket.on("getOpenAIResponse", async (data) => {
         console.log("Received data:", data);  // <-- Log the received data here
+        let fitnessGoal = ''
 
         const { answer, conversationHistory, questionNumber } = data;
         if (questionNumber === 0) {
-            let fitnessGoal = answer;
+            console.log('setting fitness Goal')
+            fitnessGoal = answer;
         }
 
         if (!answer || !Array.isArray(conversationHistory)) {
@@ -34,16 +36,8 @@ io.on("connection", (socket) => {
             return;
         }
 
-        const stream = await getChatGPTResponse(answer, conversationHistory);
+        const stream = await getChatGPTResponse(promptGen(questionNumber,fitnessGoal), conversationHistory, socket);
 
-        if (stream) {
-            for await (const part of stream) {
-                socket.emit("openAIResponseChunk", part.choices[0]);
-            }
-        } else {
-            console.error("Failed to retrieve response from OpenAI.");
-            socket.emit("error", { error: "Failed to retrieve response from OpenAI." });
-        }
     });
 
 
