@@ -6,6 +6,8 @@ import { Server } from "socket.io";
 import { getChatGPTResponse } from "./openai.js";
 import morgan from 'morgan';
 import promptGen from './promptGen.js'
+import axios from 'axios';
+import {db, postFitnessPlan} from './firebase.js'
 
 const app = express();
 const server = http.createServer(app);
@@ -17,6 +19,18 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use(morgan('dev'))
+
+app.post('/submission', async (req, res) => {
+    try {
+        const {name, phoneNumber, plan} = req.body;
+        const result = await postFitnessPlan({name, phoneNumber, plan});
+        res.status(200).json({ message: 'Successfully posted!', data: result });
+    } catch (error) {
+        res.status(500).json({ message: 'Error occurred', error: error.message });
+    }
+});
+
+
 
 io.on("connection", (socket) => {
     console.log("a user connected");

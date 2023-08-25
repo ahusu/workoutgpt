@@ -1,30 +1,48 @@
 import React, { useState } from "react";
 
-const InputField = ({ socket, page, clearPrompt }) => {
+
+const InputField = ({ socket, page, clearPrompt, history, setHistory }) => {
   const [input, setInput] = useState('');
   const [hovering, setHovering] = useState(false);
 
   const handleSubmit = () => {
-
-    let conversationHistory = JSON.parse(sessionStorage.getItem("messages")) || [
-      {
-        role: "system",
-        content: "You are a helpful assistant.",
-      },
-      {
-        role:"assistant",
-        content: "what is your fitness goal?"
-      }
-    ];
-    conversationHistory.push({
+    const newUserMessage = {
       role: 'user',
       content: input
+    };
+
+    const updatedHistory = history.length === 0
+      ? [
+          {
+            role: "system",
+            content: "You are a daily workout planner. In order to best plan workouts for your clients, you need to ask enough questions to understand their needs and where they want to go.",
+          },
+          {
+            role:"assistant",
+            content: "what is your fitness goal?"
+          },
+          newUserMessage
+        ]
+      : [...history, newUserMessage];
+
+    setHistory(updatedHistory);
+    sessionStorage.setItem("messages", JSON.stringify(updatedHistory));
+
+    socket.emit("getOpenAIResponse", {
+      answer: input,
+      conversationHistory: updatedHistory,
+      questionNumber: page
     });
-    sessionStorage.setItem("messages", JSON.stringify(conversationHistory));
-    socket.emit("getOpenAIResponse", { answer: input, conversationHistory: conversationHistory, questionNumber: page });
+
     setInput('');
     clearPrompt();
   };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && e.shiftKey) {
+      handleSubmit();
+    }
+  }
 
   return (
     <>
@@ -35,6 +53,7 @@ const InputField = ({ socket, page, clearPrompt }) => {
         value={input}
         placeholder="Enter text"
         onChange={(e) => setInput(e.target.value)}
+        onKeyPress={handleKeyPress}
       ></textarea>
 
       <button
@@ -48,6 +67,7 @@ const InputField = ({ socket, page, clearPrompt }) => {
     </>
   );
 };
+
 
 const buttonStyles = {
   backgroundColor: 'blue',
