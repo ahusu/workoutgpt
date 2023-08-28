@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import serviceAccount from "../fitness-coach-396001-firebase-adminsdk-i5vph-c677f74e11.json";
+import serviceAccount from './serviceAccount.js';
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
