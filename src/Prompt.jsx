@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {io} from "socket.io-client";
 import InputField from "./InputField";
 
-const Prompt = ({ page, nextPage, setPlan }) => {
+const Prompt = ({ page, nextPage, setPlan, finalize }) => {
   const [prompt, setPrompt] = useState("What is your fitness goal?");
   const [responding, setResponding] = useState(false);
   const [socket, setSocket] = useState(null);
@@ -48,6 +48,7 @@ const Prompt = ({ page, nextPage, setPlan }) => {
                   content: currentPrompt,
               },
           ];
+          console.log("Updated history:", updatedHistory);
           sessionStorage.setItem("messages", JSON.stringify(updatedHistory));
           return updatedHistory;
       });
@@ -74,7 +75,7 @@ const Prompt = ({ page, nextPage, setPlan }) => {
       <div>
         <h3>{prompt}</h3>
         {page === 5 ? (
-          <h2>Is there anything you want to change about the fitness plan?</h2>
+          <h2>Is there anything you want to change about the fitness plan? If not, please click Finalize to move onto the next step.</h2>
         ) : (
           ""
         )}
@@ -88,6 +89,7 @@ const Prompt = ({ page, nextPage, setPlan }) => {
           clearPrompt={clearPrompt}
           setHistory={setHistory}
           history={history}
+          finalize={finalize}
         />
       )}
     </>

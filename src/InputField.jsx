@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 
-const InputField = ({ socket, page, clearPrompt, history, setHistory }) => {
+const InputField = ({ socket, page, clearPrompt, history, setHistory, finalize }) => {
   const [input, setInput] = useState('');
   const [hovering, setHovering] = useState(false);
 
@@ -15,7 +15,7 @@ const InputField = ({ socket, page, clearPrompt, history, setHistory }) => {
       ? [
           {
             role: "system",
-            content: "You are a daily workout planner. In order to best plan workouts for your clients, you need to ask enough questions to understand their needs and where they want to go.",
+            content: "You are a daily workout planner. In order to best plan workouts for your clients, you need to ask enough questions to understand their needs and where they want to go. Do not ask the same question twice.",
           },
           {
             role:"assistant",
@@ -55,15 +55,25 @@ const InputField = ({ socket, page, clearPrompt, history, setHistory }) => {
         onChange={(e) => setInput(e.target.value)}
         onKeyPress={handleKeyPress}
       ></textarea>
-
-      <button
+    <div style={{ display: 'flex' , justifyContent: 'center'}}>
+    <button
         onClick={handleSubmit}
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
-        style={hovering ? hoverStyles : buttonStyles}
-      >
+        style={{...hovering ? hoverStyles : buttonStyles, marginRight: '10px'}}
+    >
         Submit
-      </button>
+    </button>
+    {page===5?<button
+        onClick={finalize}
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+        style={hovering ? hoverStyles : buttonStyles}
+    >
+        Finalize
+    </button>:null}
+</div>
+
     </>
   );
 };

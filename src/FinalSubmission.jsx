@@ -1,24 +1,36 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
-const FinalSubmission = ({plan}) => {
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+const FinalSubmission = ({ plan }) => {
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [valid, setValid] = useState(null);
 
   const handleSubmit = async () => {
-    try {
-        const response = await axios.post('/submission', { name, phoneNumber, plan });
+    if (isValidPhoneNumber(phoneNumber)) {
+      try {
+        setValid(true);
+        const response = await axios.post("/submission", {
+          name,
+          phoneNumber,
+          plan,
+        });
 
-        // Handle the response here if needed
-        console.log(response.data); // assuming your server sends back some data
-
-        alert('Submission successful!');
-    } catch (error) {
-        console.error('Error submitting the data:', error);
-        alert('Error during submission. Please try again.');
+        alert("Submission successful!");
+        //TODO OTHER LOGIC AFTER SUBMISSION
+      } catch (error) {
+        console.error("Error submitting the data:", error);
+        alert("Error during submission. Please try again.");
+      }
     }
-};
+  };
 
+  function isValidPhoneNumber(phone) {
+    // This pattern matches numbers like: 1234567890, 123-456-7890, (123) 456-7890, and +31636363634
+    const pattern =
+      /^(\+\d{1,2}\s?)?((\(\d{1,4}\))|\d{1,4})[\s.-]?\d{1,4}[\s.-]?\d{1,4}$/;
+    return pattern.test(phone);
+  }
 
   return (
     <div>
@@ -36,7 +48,8 @@ const FinalSubmission = ({plan}) => {
 
       <div>
         <label>
-          What is your phone number so I can text you to help keep you on track to meet your goals?
+          What is your phone number so I can text you to help keep you on track
+          to meet your goals?
           <input
             type="text"
             value={phoneNumber}
